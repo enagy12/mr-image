@@ -23,34 +23,50 @@ app.directive('mrImage', function() {
 
             element.addClass('mr-image');
 
+            var updateSize = function () {
+                scope.height = scope.height || scope.image.height;
+                scope.width = scope.width || scope.image.width;
+
+                if (angular.isUndefined(scope.scale) && angular.isDefined(scope.maxWidth)) {
+                    scope.scale = scope.maxWidth >= scope.width ? 1 : scope.maxWidth / scope.width;
+                }
+                else {
+                    scope.scale = scope.scale || 1;
+                }
+
+                element.css('width', scope.scaleValuePx(scope.width, scope.scale));
+                element.css('height', scope.scaleValuePx(scope.height, scope.scale));
+            };
+
             function setImageSize(src) {
                 scope.image = new Image();
                 scope.image.onload = function () {
-                    scope.$apply(function () {
-                        scope.height = scope.height || scope.image.height;
-                        scope.width = scope.width || scope.image.width;
-
-                        if (angular.isUndefined(scope.scale) && angular.isDefined(scope.maxWidth)) {
-                            scope.scale = scope.maxWidth >= scope.width ? 1 : scope.maxWidth / scope.width;
-                        }
-                        else {
-                            scope.scale = scope.scale || 1;
-                        }
-
-                        element.css('width', scope.scaleValue(scope.width, scope.scale) + 'px');
-                        element.css('height', scope.scaleValue(scope.height, scope.scale) + 'px');
-                    });
+                    scope.$apply(function() {updateSize();});
                 };
                 scope.image.src = src;
             }
 
             setImageSize(scope.src);
 
-            scope.scaleValue = function (value, scale) {
-                return Math.floor(value * scale);
-            };
-            
-            scope.scaleValuePx = function(value, scale) {
+            scope.$watch('src', function (newVal, oldVal) {
+                if (newVal && newVal != oldVal)
+                {
+                    delete scope.height;
+                    delete scope.width;
+                    delete scope.scale;
+                    delete scope.selector.x1;
+                    delete scope.selector.y1;
+                    delete scope.selector.x2;
+                    delete scope.selector.y2;
+                    scope.width = null;
+                    scope.image.onload = function() {
+                        scope.$apply(function() {updateSize();});
+                    };
+                    scope.image.src = newVal;
+                }
+            });
+
+	    scope.scaleValuePx = function(value, scale) {
                 return Math.floor(value * scale) + 'px';
             };
         }
