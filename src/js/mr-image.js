@@ -17,7 +17,7 @@ app.directive('mrImage', function() {
             'ng-style="{ \'height\': scaleValuePx(height, scale), \'width\': scaleValuePx(width, scale) }"></div>' +
             '<div mr-image-drawer mr-model="drawer" ' +
             'ng-style="{ \'height\': scaleValuePx(height, scale), \'width\': scaleValuePx(width, scale) }"></div>' +
-            '<img ng-src="{{src}}" width="{{scaleValue(width, scale)}}" height="{{scaleValue(height, scale)}}">',
+            '<img ng-src="{{src}}" width="{{scaleValuePx(width, scale)}}" height="{{scaleValuePx(height, scale)}}">',
 
         link: function (scope, element) {
 
