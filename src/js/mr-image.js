@@ -1,7 +1,7 @@
 
 var app = angular.module('mrImage', []);
 
-app.directive('mrImage', function() {
+app.directive('mrImage', ['$timeout', function($timeout) {
     return {
         restrict: 'A',
         scope: {
@@ -41,7 +41,9 @@ app.directive('mrImage', function() {
             function setImageSize(src) {
                 scope.image = new Image();
                 scope.image.onload = function () {
-                    scope.$apply(function() {updateSize();});
+                    $timeout(function() {
+                        updateSize();
+                    }, 0);
                 };
                 scope.image.src = src;
             }
@@ -60,7 +62,9 @@ app.directive('mrImage', function() {
                     delete scope.selector.y2;
                     scope.width = null;
                     scope.image.onload = function() {
-                        scope.$apply(function() {updateSize();});
+                        $timeout(function() {
+                            updateSize();
+                        }, 0);
                     };
                     scope.image.src = newVal;
                 }
@@ -71,4 +75,4 @@ app.directive('mrImage', function() {
             };
         }
     };
-});
+}]);
